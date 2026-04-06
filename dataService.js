@@ -38,6 +38,14 @@ function getAgeAveragesObject() {
   }
 }
 
+/*
+TODO
+Returns an object { "unknown": int, "non-binary": int, "female": int, "male": int }
+ */
+function getGenderCounts() {
+  return null;
+}
+
 // Education //
 function getDegreeCounts() {
   let degreeCounts = {};
