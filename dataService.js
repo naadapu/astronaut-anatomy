@@ -1,3 +1,88 @@
+function getGroupNames() {
+  let groupsObject = nasa.astronaut_groups;
+  let groupNames = Object.keys(groupsObject);
+  return groupNames;
+}
+
+function getGroup(groupName) {
+  return nasa.astronaut_groups[groupName];
+}
+
+function getTotalNumberOfAstronauts() {
+  let total = 0;
+  for (let groupName in nasa.astronaut_groups) {
+    total += nasa.astronaut_groups[groupName].astronauts.length;
+  }
+  return total;
+}
+
+function getAgeAveragesObject() {
+  let groupNames = getGroupNames();
+  let averageAgeByGroup = {};
+  let totalAgeSum = 0;
+  let groupCount = 0;
+
+  for (let i = 0; groupNames[i]; i++) {
+    let groupName = groupNames[i];
+    let group = getGroup(groupName);
+    averageAgeByGroup[groupName] = group.average_age_of_astronauts;
+    totalAgeSum += group.average_age_of_astronauts;
+    groupCount++;
+  }
+
+  let overallAverageAge = (totalAgeSum / groupCount).toFixed(2);
+
+  return {
+    averageAge: overallAverageAge,
+    averageAgeByGroup: averageAgeByGroup
+  }
+}
+
+// Education //
+function getDegreeCounts() {
+  let degreeCounts = {};
+  let groupNames = getGroupNames();
+
+  for (let i = 0; i < groupNames.length; i++) {
+    let group = getGroup(groupNames[i]);
+    let astronauts = group.astronauts;
+
+    for (let j = 0; j < astronauts.length; j++) {
+      let degree = astronauts[j].highest_degree;
+      if (degreeCounts[degree]) {
+        degreeCounts[degree]++;
+      } else {
+        degreeCounts[degree] = 1;
+      }
+    }
+  }
+
+  return degreeCounts;
+}
+
+function formatDegreeCounts() { // TODO where should this go?
+  let degreeCounts = getDegreeCounts();
+  let degreeOrder = ['PhD', 'MD', 'MS', 'MEd', 'MPhil', 'MSc', 'MPH', 'EMPA', 'BS', 'BEng'];
+  let output = [];
+
+  for (let i = 0; i < degreeOrder.length; i++) {
+    let degree = degreeOrder[i];
+    if (degreeCounts[degree]) {
+      let label = degree;
+      if (degreeCounts[degree] > 1 && degree === 'PhD') {
+        label = 'PhDs';
+      } else if (degreeCounts[degree] > 1 && degree === 'MD') {
+        label = 'MDs';
+      }
+      output.push(`${degreeCounts[degree]} ${label}`);
+    }
+  }
+
+  return output.join('. ') + '.';
+}
+
+// Military //
+
 function getMilitaryCounts() {
   let militaryBranches = {};
   let civilianCount = 0;
@@ -59,7 +144,7 @@ function getMilitaryCounts() {
   };
 }
 
-function formatMilitaryCounts() {
+function formatMilitaryCounts() { // TODO this is above the data API layer
   let counts = getMilitaryCounts();
   let output = `${counts.civilian} Civilian${counts.civilian !== 1 ? 's' : ''}. ${counts.military} Military (`;
   
@@ -89,3 +174,8 @@ function formatMilitaryCounts() {
   output += allBranches.join(', ') + ').';
   return output;
 }
+
+// compute and display ratio of astronauts with military experience
+// compute and display astronauts by military branch + unaffiliated
+// compute and display statistics related to degrees, ie. (20 PhDs, 13 Masters,...)
+// + only count one degree per person, the highest degree earned
