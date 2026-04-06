@@ -45,7 +45,7 @@ function displayGroupsInfo(filters = {}) {
     let thead = document.createElement('thead');
     let headerRow = document.createElement('tr');
     
-    let headers = ['Name', 'Age', 'Degree', 'Education', 'Military', 'Nationality'];
+    let headers = ['Name', 'Age at selection', 'Degree', 'Education', 'Military', 'Nationality'];
     for (let j = 0; j < headers.length; j++) {
       let th = document.createElement('th');
       th.innerText = headers[j];
