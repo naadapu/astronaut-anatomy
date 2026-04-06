@@ -1,29 +1,26 @@
-// loader.js
-
 let astronautCountElement = document.getElementById('astronaut_count');
+let degreesElement = document.getElementById('degree_counts');
+let militaryElement = document.getElementById('military_counts');
+
 if (astronautCountElement) {
   astronautCountElement.innerText = getTotalNumberOfAstronauts();
 }
 
-// education
-let degreesElement = document.getElementById('degree_counts');
 if (degreesElement) {
   degreesElement.innerText = formatDegreeCounts();
 }
 
-// military
-let militaryElement = document.getElementById('military_counts');
 if (militaryElement) {
   militaryElement.innerText = formatMilitaryCounts();
 }
 
-// age
+// todo probably simplify this shit somehow
+let ageAverageAllGroupsElement = document.getElementById('age_all_groups')
+let ageAveragesByGroupElement = document.getElementById('age_by_group')
+
 let ageAveragesObject = getAgeAveragesObject();
 let ageAverageAllGroups = ageAveragesObject.averageAge;
 let ageAveragesByGroup = ageAveragesObject.averageAgeByGroup;
-
-let ageAverageAllGroupsElement = document.getElementById('age_all_groups')
-let ageAveragesByGroupElement = document.getElementById('age_by_group')
 
 if (ageAverageAllGroupsElement) {
   ageAverageAllGroupsElement.innerText = ageAverageAllGroups;
