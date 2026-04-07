@@ -47,46 +47,37 @@ function getGenderCounts() {
 }
 
 // Education //
-function getDegreeCounts() {
-  let degreeCounts = {};
-  let groupNames = getGroupNames();
+function getDegreeCounts(filters = {}) {
+  const counts = {};
 
-  for (let i = 0; i < groupNames.length; i++) {
-    let group = getGroup(groupNames[i]);
-    let astronauts = group.astronauts;
+  const groupNames = getGroupNames();
 
-    for (let j = 0; j < astronauts.length; j++) {
-      let degree = astronauts[j].highest_degree;
-      if (degreeCounts[degree]) {
-        degreeCounts[degree]++;
-      } else {
-        degreeCounts[degree] = 1;
-      }
-    }
-  }
+  groupNames.forEach(name => {
+    const group = getGroup(name);
 
-  return degreeCounts;
+    group.astronauts.forEach(astronaut => {
+      if (!passesFilters(astronaut, filters)) return;
+
+      const degree = astronaut.highest_degree;
+      if (!degree) return;
+
+      counts[degree] = (counts[degree] || 0) + 1;
+    });
+  });
+
+  return counts;
 }
 
-function formatDegreeCounts() { // TODO where should this go?
-  let degreeCounts = getDegreeCounts();
-  let degreeOrder = ['PhD', 'MD', 'MS', 'MEd', 'MPhil', 'MSc', 'MPH', 'EMPA', 'BS', 'BEng'];
-  let output = [];
-
-  for (let i = 0; i < degreeOrder.length; i++) {
-    let degree = degreeOrder[i];
-    if (degreeCounts[degree]) {
-      let label = degree;
-      if (degreeCounts[degree] > 1 && degree === 'PhD') {
-        label = 'PhDs';
-      } else if (degreeCounts[degree] > 1 && degree === 'MD') {
-        label = 'MDs';
-      }
-      output.push(`${degreeCounts[degree]} ${label}`);
-    }
-  }
-
-  return output.join('. ') + '.';
+// Filters //
+/**
+ * Checks if an astronaut passes the current filters
+ */
+function passesFilters(astronaut, filters) {
+  if (filters.military === 'military' && !astronaut.military_experience) return false;
+  if (filters.military === 'civilian' && astronaut.military_experience) return false;
+  if (filters.degree !== 'all' && astronaut.highest_degree !== filters.degree) return false;
+  if (filters.gender !== 'all' && astronaut.gender !== filters.gender) return false;
+  return true;
 }
 
 // Military //
@@ -150,37 +141,6 @@ function getMilitaryCounts() {
     military: militaryTotalCount,
     branches: militaryBranches
   };
-}
-
-function formatMilitaryCounts() { // TODO this is above the data API layer
-  let counts = getMilitaryCounts();
-  let output = `${counts.civilian} Civilian${counts.civilian !== 1 ? 's' : ''}. ${counts.military} Military (`;
-  
-  // Separate US and international branches
-  let usAmerican = ['Air Force', 'Navy', 'Army', 'Marines', 'Coast Guard', 'Space Force'];
-  let usaStrings = [];
-  let internationalStrings = [];
-  
-  for (let branch in counts.branches) {
-    let branchString = `${counts.branches[branch]} ${branch}`;
-    
-    if (usAmerican.includes(branch)) {
-      usaStrings.push(branchString);
-    } else {
-      internationalStrings.push(branchString);
-    }
-  }
-  
-  // Combine USA branches first
-  let allBranches = usaStrings;
-  
-  // Add international branches with label if they exist
-  if (internationalStrings.length > 0) {
-    allBranches.push('International: ' + internationalStrings.join(', '));
-  }
-  
-  output += allBranches.join(', ') + ').';
-  return output;
 }
 
 // compute and display ratio of astronauts with military experience

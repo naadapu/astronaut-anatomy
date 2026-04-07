@@ -1,24 +1,3 @@
-function getDegreeCounts(filters) {
-  const counts = {};
-
-  const groupNames = getGroupNames();
-
-  groupNames.forEach(name => {
-    const group = getGroup(name);
-
-    group.astronauts.forEach(astronaut => {
-      if (!passesFilters(astronaut, filters)) return;
-
-      const degree = astronaut.highest_degree;
-      if (!degree) return;
-
-      counts[degree] = (counts[degree] || 0) + 1;
-    });
-  });
-
-  return counts;
-}
-
 function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
   const degreeRank = {
   PhD: 1,
@@ -85,21 +64,15 @@ function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
   });
 }
 
-function passesFilters(astronaut, filters) {
-  if (filters.military === 'military' && !astronaut.military_experience) return false;
-  if (filters.military === 'civilian' && astronaut.military_experience) return false;
-
-  if (filters.degree !== 'all') {
-    if (astronaut.highest_degree !== filters.degree) return false;
-  }
-
-  return true;
-}
+// Subscribe to filter changes and auto-render
+filterService.subscribe((filters) => {
+  drawDegreeChart(filters);
+});
 
 document.addEventListener("DOMContentLoaded", () => {
-  drawDegreeChart();
+  drawDegreeChart(filterService.getFilters());
 });
 
 window.addEventListener('resize', () => {
-  drawDegreeChart(activeFilters);
+  drawDegreeChart(filterService.getFilters());
 });

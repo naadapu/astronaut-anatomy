@@ -1,8 +1,3 @@
-let activeFilters = {
-  military: 'all',
-  degree: 'all'
-};
-
 function displayGroupsInfo(filters = {}) {
   let groupNames = getGroupNames();
   
@@ -57,27 +52,7 @@ function displayGroupsInfo(filters = {}) {
     // Table body
     let tbody = document.createElement('tbody');
 
-    let astronauts = group.astronauts.filter(astronaut => {
-
-    // Military filter
-    if (filters.military === 'military' && !astronaut.military_experience) {
-      return false;
-    }
-
-    if (filters.military === 'civilian' && astronaut.military_experience) {
-      return false;
-    }
-
-    // Degree filter
-    if (filters.degree !== 'all') {
-      if (astronaut.highest_degree !== filters.degree) {
-        return false;
-      }
-    }
-
-
-    return true;
-  });
+    let astronauts = group.astronauts.filter(astronaut => passesFilters(astronaut, filters));
 
     if (astronauts.length === 0) continue; // don't show empty groups
     for (let j = 0; j < astronauts.length; j++) {
@@ -123,26 +98,23 @@ function displayGroupsInfo(filters = {}) {
   }
 }
 
-function setupMilitaryFilter() {
+function setupFilters() {
   const militarySelect = document.getElementById('military_filter');
-
-  militarySelect.addEventListener('change', () => {
-    activeFilters.military = militarySelect.value;
-    displayGroupsInfo(activeFilters);
-    drawDegreeChart(activeFilters);
-  });
-}
-
-function setupDegreeFilter() {
   const degreeSelect = document.getElementById('degree_filter');
 
-  degreeSelect.addEventListener('change', () => {
-    activeFilters.degree = degreeSelect.value;
-    displayGroupsInfo(activeFilters);
-    drawDegreeChart(activeFilters);
+  militarySelect.addEventListener('change', (e) => {
+    filterService.setFilter('military', e.target.value);
+  });
+
+  degreeSelect.addEventListener('change', (e) => {
+    filterService.setFilter('degree', e.target.value);
   });
 }
 
-setupMilitaryFilter();
-setupDegreeFilter();
-displayGroupsInfo(activeFilters);
+// Subscribe to filter changes and auto-render
+filterService.subscribe((filters) => {
+  displayGroupsInfo(filters);
+});
+
+setupFilters();
+displayGroupsInfo(filterService.getFilters());
