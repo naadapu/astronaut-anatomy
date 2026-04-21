@@ -33,7 +33,6 @@ function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
 
   const values = degrees.map(degree => counts[degree])
 
-
   if (values.length === 0) return;
 
   const maxValue = Math.max(...values);

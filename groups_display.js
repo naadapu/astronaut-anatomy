@@ -99,8 +99,13 @@ function displayGroupsInfo(filters = {}) {
 }
 
 function setupFilters() {
+  const genderSelect = document.getElementById('gender_filter');
   const militarySelect = document.getElementById('military_filter');
   const degreeSelect = document.getElementById('degree_filter');
+
+  genderSelect.addEventListener('change', (e) => {
+    filterService.setFilter('gender', e.target.value);
+  });
 
   militarySelect.addEventListener('change', (e) => {
     filterService.setFilter('military', e.target.value);
