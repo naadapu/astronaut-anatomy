@@ -1,3 +1,6 @@
+import { getDegreeCounts } from './dataService.js';
+import { filterService } from './filterService.js';
+
 function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
   const degreeRank = {
   PhD: 1,

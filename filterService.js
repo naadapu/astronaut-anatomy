@@ -1,7 +1,7 @@
 // filterService.js
 // Single source of truth for filter state and logic
 
-const filterService = (() => {
+export const filterService = (() => {
   const DEFAULT_FILTERS = {
     military: 'all',
     degree: 'all',

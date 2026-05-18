@@ -1,3 +1,6 @@
+import { getGroupNames, getGroup, passesFilters } from './dataService.js';
+import { filterService } from './filterService.js';
+
 function displayGroupsInfo(filters = {}) {
   let groupNames = getGroupNames();
   

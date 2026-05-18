@@ -1,14 +1,16 @@
-function getGroupNames() {
+import { nasa } from './data.js';
+
+export function getGroupNames() {
   let groupsObject = nasa.astronaut_groups;
   let groupNames = Object.keys(groupsObject);
   return groupNames;
 }
 
-function getGroup(groupName) {
+export function getGroup(groupName) {
   return nasa.astronaut_groups[groupName];
 }
 
-function getTotalNumberOfAstronauts() {
+export function getTotalNumberOfAstronauts() {
   let total = 0;
   for (let groupName in nasa.astronaut_groups) {
     total += nasa.astronaut_groups[groupName].astronauts.length;
@@ -16,7 +18,7 @@ function getTotalNumberOfAstronauts() {
   return total;
 }
 
-function getAgeAveragesObject() {
+export function getAgeAveragesObject() {
   let groupNames = getGroupNames();
   let averageAgeByGroup = {};
   let totalAgeSum = 0;
@@ -42,12 +44,12 @@ function getAgeAveragesObject() {
 TODO
 Returns an object { "unknown": int, "non-binary": int, "female": int, "male": int }
  */
-function getGenderCounts() {
+export function getGenderCounts() {
   return null;
 }
 
 // Education //
-function getDegreeCounts(filters = {}) {
+export function getDegreeCounts(filters = {}) {
   const counts = {};
 
   const groupNames = getGroupNames();
@@ -72,7 +74,7 @@ function getDegreeCounts(filters = {}) {
 /**
  * Checks if an astronaut passes the current filters
  */
-function passesFilters(astronaut, filters) {
+export function passesFilters(astronaut, filters) {
   if (filters.military === 'military' && !astronaut.military_experience) return false;
   if (filters.military === 'civilian' && astronaut.military_experience) return false;
   if (filters.degree !== 'all' && astronaut.highest_degree !== filters.degree) return false;
@@ -82,7 +84,7 @@ function passesFilters(astronaut, filters) {
 
 // Military //
 
-function getMilitaryCounts() {
+export function getMilitaryCounts() {
   let militaryBranches = {};
   let civilianCount = 0;
   let militaryTotalCount = 0;
