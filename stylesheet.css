@@ -2,6 +2,10 @@
   box-sizing: border-box;
 }
 
+#filters, select {
+  font-size: large;
+}
+
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
