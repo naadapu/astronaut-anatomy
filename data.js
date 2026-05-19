@@ -17,7 +17,7 @@
 */
 
 // todo add group 24: https://en.wikipedia.org/wiki/NASA_Astronaut_Group_24
-let nasa = {
+export const nasa = {
   "astronaut_groups": {
     "group_24": {
       "selection_year": 2025,

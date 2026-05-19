@@ -1,16 +1,13 @@
-function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
-  const degreeRank = {
-  PhD: 1,
-  MD: 2,
-  MS: 3,
-  MEd: 4,
-  MPhil: 5,
-  MSc: 6,
-  MPH: 7,
-  EMPA: 8,
-  BS: 9,
-  BEng: 10
+import { getDegreeCounts } from './dataService.js';
+import { filterService } from './filterService.js';
+
+const DEGREE_RANK = {
+  PhD: 1, MD: 2, MS: 3, MEd: 4, MPhil: 5, MSc: 6, MPH: 7, EMPA: 8, BS: 9, BEng: 10
 };
+const PADDING = 50;
+const BAR_GAP = 10;
+
+function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
 
   const canvas = document.getElementById('degreeChart');
   const ctx = canvas.getContext('2d');
@@ -19,59 +16,42 @@ function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
 
-  if (!filters) { filters = { military: 'all', degree: 'all' }}
+  const bars = Object.entries(getDegreeCounts(filters))
+    .sort(([a], [b]) => (DEGREE_RANK[a] || 999) - (DEGREE_RANK[b] || 999));
 
-  const counts = getDegreeCounts(filters);
+  if (bars.length === 0) return;
 
-  const degrees = Object.keys(counts);
-  // Sort degrees by seniority using our rank map
-  degrees.sort((a, b) => {
-    const rankA = degreeRank[a] || 999; // fallback for unknown degrees
-    const rankB = degreeRank[b] || 999;
-    return rankA - rankB;
-  });
-
-  const values = degrees.map(degree => counts[degree])
-
-  if (values.length === 0) return;
-
-  const maxValue = Math.max(...values);
-
+  const maxValue = Math.max(...bars.map(([, count]) => count));
   const chartWidth = canvas.width;
   const chartHeight = canvas.height;
-  const padding = 50;
-
-  const barWidth = (chartWidth - padding * 2) / degrees.length;
+  const barWidth = (chartWidth - PADDING * 2) / bars.length;
 
   ctx.clearRect(0, 0, chartWidth, chartHeight);
 
-  degrees.forEach((degree, index) => {
-    const value = values[index];
+  bars.forEach(([degree, value], index) => {
 
-    const barHeight = (value / maxValue) * (chartHeight - padding * 2);
+    const barHeight = (value / maxValue) * (chartHeight - PADDING * 2);
 
-    const x = padding + index * barWidth;
-    const y = chartHeight - padding - barHeight;
+    const x = PADDING + index * barWidth;
+    const y = chartHeight - PADDING - barHeight;
+
+    const centerX = x + (barWidth - BAR_GAP) / 2;
 
     ctx.fillStyle = "#2a6fdb";
-    ctx.fillRect(x, y, barWidth - 10, barHeight);
+    ctx.fillRect(x, y, barWidth - BAR_GAP, barHeight);
 
     ctx.fillStyle = "#000";
     ctx.textAlign = "center";
-    ctx.fillText(value, x + (barWidth - 10) / 2, y - 5);
-    ctx.fillText(degree, x + (barWidth - 10) / 2, chartHeight - padding + 20);
+    ctx.fillText(value, centerX, y - 5);
+    ctx.fillText(degree, centerX, chartHeight - PADDING + 20);
   });
 }
 
-// Subscribe to filter changes and auto-render
-filterService.subscribe((filters) => {
-  drawDegreeChart(filters);
-});
+function init() {
+  const redraw = () => drawDegreeChart(filterService.getFilters());
+  filterService.subscribe(filters => drawDegreeChart(filters));
+  document.addEventListener('DOMContentLoaded', redraw);
+  window.addEventListener('resize', redraw);
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-  drawDegreeChart(filterService.getFilters());
-});
-
-window.addEventListener('resize', () => {
-  drawDegreeChart(filterService.getFilters());
-});
+init();

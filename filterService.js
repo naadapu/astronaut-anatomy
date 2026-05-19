@@ -1,7 +1,7 @@
 // filterService.js
 // Single source of truth for filter state and logic
 
-const filterService = (() => {
+export const filterService = (() => {
   const DEFAULT_FILTERS = {
     military: 'all',
     degree: 'all',
@@ -66,3 +66,11 @@ const filterService = (() => {
     }
   };
 })();
+
+export function passesFilters(astronaut, filters) {
+  if (filters.military === 'military' && !astronaut.military_experience) return false;
+  if (filters.military === 'civilian' && astronaut.military_experience) return false;
+  if (filters.degree !== 'all' && astronaut.highest_degree !== filters.degree) return false;
+  if (filters.gender !== 'all' && astronaut.gender !== filters.gender) return false;
+  return true;
+}
