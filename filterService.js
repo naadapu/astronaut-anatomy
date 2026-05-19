@@ -66,3 +66,11 @@ export const filterService = (() => {
     }
   };
 })();
+
+export function passesFilters(astronaut, filters) {
+  if (filters.military === 'military' && !astronaut.military_experience) return false;
+  if (filters.military === 'civilian' && astronaut.military_experience) return false;
+  if (filters.degree !== 'all' && astronaut.highest_degree !== filters.degree) return false;
+  if (filters.gender !== 'all' && astronaut.gender !== filters.gender) return false;
+  return true;
+}

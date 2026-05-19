@@ -2,7 +2,7 @@ let astronautCountElement = document.getElementById('astronaut_count');
 let degreesElement = document.getElementById('degree_counts');
 let militaryElement = document.getElementById('military_counts');
 
-if (astronautCountElement) {
+if (astronautCountElement) {military_counts
   astronautCountElement.innerText = getTotalNumberOfAstronauts();
 }
 

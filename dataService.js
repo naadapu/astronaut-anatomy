@@ -1,4 +1,5 @@
 import { nasa } from './data.js';
+import { passesFilters } from './filterService.js';
 
 export function getGroupNames() {
   let groupsObject = nasa.astronaut_groups;
@@ -40,14 +41,6 @@ export function getAgeAveragesObject() {
   }
 }
 
-/*
-TODO
-Returns an object { "unknown": int, "non-binary": int, "female": int, "male": int }
- */
-export function getGenderCounts() {
-  return null;
-}
-
 // Education //
 export function getDegreeCounts(filters = {}) {
   const counts = {};
@@ -68,18 +61,6 @@ export function getDegreeCounts(filters = {}) {
   });
 
   return counts;
-}
-
-// Filters //
-/**
- * Checks if an astronaut passes the current filters
- */
-export function passesFilters(astronaut, filters) {
-  if (filters.military === 'military' && !astronaut.military_experience) return false;
-  if (filters.military === 'civilian' && astronaut.military_experience) return false;
-  if (filters.degree !== 'all' && astronaut.highest_degree !== filters.degree) return false;
-  if (filters.gender !== 'all' && astronaut.gender !== filters.gender) return false;
-  return true;
 }
 
 // Military //
