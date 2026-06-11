@@ -7,8 +7,11 @@ const DEGREE_RANK = {
 const PADDING = 50;
 const BAR_GAP = 10;
 
-function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
+function getCSSVar(name) {
+  return getComputedStyle(document.body).getPropertyValue(name).trim();
+}
 
+function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
   const canvas = document.getElementById('degreeChart');
   const ctx = canvas.getContext('2d');
 
@@ -29,18 +32,15 @@ function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
   ctx.clearRect(0, 0, chartWidth, chartHeight);
 
   bars.forEach(([degree, value], index) => {
-
     const barHeight = (value / maxValue) * (chartHeight - PADDING * 2);
-
     const x = PADDING + index * barWidth;
     const y = chartHeight - PADDING - barHeight;
-
     const centerX = x + (barWidth - BAR_GAP) / 2;
 
-    ctx.fillStyle = "#2a6fdb";
+    ctx.fillStyle = getCSSVar('--bar-color');
     ctx.fillRect(x, y, barWidth - BAR_GAP, barHeight);
 
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = getCSSVar('--bar-label');
     ctx.textAlign = "center";
     ctx.fillText(value, centerX, y - 5);
     ctx.fillText(degree, centerX, chartHeight - PADDING + 20);

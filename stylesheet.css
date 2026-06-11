@@ -1,49 +1,73 @@
-* {
-  box-sizing: border-box;
+:root {
+  --bg: rgb(255, 255, 255);
+  --fg: rgb(0, 0, 0);
+  --fg-muted: rgb(100, 100, 100);
+  --border: #000;
+  --border-row: rgb(100, 100, 100);
+  --select-bg: #fff;
+  --bar-color: #2a6fdb;
+  --bar-label: #000;
 }
 
-#filters, select {
-  font-size: large;
+body.dark-mode {
+  --bg: #0f1117;
+  --fg: #e8eaf0;
+  --fg-muted: #8b95a8;
+  --border: #444;
+  --border-row: #333;
+  --select-bg: #1e2130;
+  --bar-color: #4d9fff;
+  --bar-label: #e8eaf0;
+}
+
+#dark-mode-toggle {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  z-index: 999;
+  background: var(--select-bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s, color 0.2s;
+}
+#dark-mode-toggle:hover { opacity: 0.8; }
+
+* { box-sizing: border-box; }
+
+#filters, select { font-size: large; }
+
+select {
+  background-color: var(--select-bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
 }
 
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 20px;
-  background-color: rgb(255, 255, 255);
-  color: rgb(0, 0, 0);
+  background-color: var(--bg);
+  color: var(--fg);
   font-size: 16px;
   line-height: 1.6;
+  transition: background-color 0.25s, color 0.25s;
 }
 
-h1 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-h2 {
-  font-size: 22px;
-  margin-top: 30px;
-  margin-bottom: 10px;
-}
-
-h3 {
-  font-size: 18px;
-  margin-bottom: 8px;
-}
-
-p {
-  font-size: 16px;
-  margin: 8px 0;
-}
-
-em {
-  font-style: italic;
-}
+h1 { font-size: 28px; margin-bottom: 10px; }
+h2 { font-size: 22px; margin-top: 30px; margin-bottom: 10px; }
+h3 { font-size: 18px; margin-bottom: 8px; }
+p { font-size: 16px; margin: 8px 0; }
+em { font-style: italic; }
 
 hr {
   border: none;
-  border-top: 1px solid #000;
+  border-top: 1px solid var(--border);
   margin: 20px 0;
 }
 
@@ -56,11 +80,11 @@ table {
 table th, table td {
   padding: 10px 8px;
   text-align: left;
-  border-bottom: 1px solid rgb(100, 100, 100);
+  border-bottom: 1px solid var(--border-row);
 }
 
 table th {
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid var(--border);
   font-weight: bold;
 }
 
@@ -69,89 +93,29 @@ table th {
   margin-bottom: 20px;
 }
 
-.group-section {
-  margin-bottom: 50px;
-}
+.group-section { margin-bottom: 50px; }
 
 @media (max-width: 768px) {
-  body {
-    padding: 15px;
-    font-size: 15px;
-  }
-
-  h1 {
-    font-size: 24px;
-  }
-
-  h2 {
-    font-size: 20px;
-    margin-top: 25px;
-  }
-
-  h3 {
-    font-size: 16px;
-  }
-
-  p {
-    font-size: 15px;
-    margin: 6px 0;
-  }
-
-  table {
-    font-size: 13px;
-  }
-
-  table th, table td {
-    padding: 8px 6px;
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .group-section {
-    margin-bottom: 40px;
-  }
+  body { padding: 15px; font-size: 15px; }
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; margin-top: 25px; }
+  h3 { font-size: 16px; }
+  p { font-size: 15px; margin: 6px 0; }
+  table { font-size: 13px; }
+  table th, table td { padding: 8px 6px; }
+  .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .group-section { margin-bottom: 40px; }
 }
 
 @media (max-width: 480px) {
-  body {
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  h1 {
-    font-size: 20px;
-    margin-bottom: 8px;
-  }
-
-  h2 {
-    font-size: 18px;
-    margin-top: 20px;
-  }
-
-  h3 {
-    font-size: 15px;
-    margin-bottom: 6px;
-  }
-
-  p {
-    font-size: 14px;
-    margin: 5px 0;
-  }
-
-  table {
-    font-size: 12px;
-  }
-
-  table th, table td {
-    padding: 6px 4px;
-  }
-
-  .group-section {
-    margin-bottom: 30px;
-  }
+  body { padding: 12px; font-size: 14px; }
+  h1 { font-size: 20px; margin-bottom: 8px; }
+  h2 { font-size: 18px; margin-top: 20px; }
+  h3 { font-size: 15px; margin-bottom: 6px; }
+  p { font-size: 14px; margin: 5px 0; }
+  table { font-size: 12px; }
+  table th, table td { padding: 6px 4px; }
+  .group-section { margin-bottom: 30px; }
 }
 
 #degreeChart {
