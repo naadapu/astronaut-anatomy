@@ -6,6 +6,11 @@ Explore the qualities of astronauts selected for NASA missions (data is from Wik
 
 Created for students interested in becoming astronauts. Astronomy enthusiasts welcome.
 
+### To run site:
+- clone the project
+- In terminal: `pushd . ; python3 -m http.server 8000; popd`
+- go to `localhost:8000` in a browser
+
 
 #### Note to all astronaut prospects: This is not a how-to guide. This project describes selected astronauts and lacks applicant data. Copying surface traits without replicating underlying skillsets, responsibilities, successes...is unlikely to help.
 
