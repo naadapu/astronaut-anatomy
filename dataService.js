@@ -65,7 +65,7 @@ export function getDegreeCounts(filters = {}) {
 
 // Military //
 
-export function getMilitaryCounts() {
+export function getMilitaryCounts(filters = {}) {
   let militaryBranches = {};
   let civilianCount = 0;
   let militaryTotalCount = 0;
@@ -76,7 +76,12 @@ export function getMilitaryCounts() {
     let astronauts = group.astronauts;
 
     for (let j = 0; j < astronauts.length; j++) {
-      let militaryExp = astronauts[j].military_experience;
+      let astronaut = astronauts[j];
+      
+      // Apply filters
+      if (!passesFilters(astronaut, filters)) continue;
+      
+      let militaryExp = astronaut.military_experience;
 
       if (!militaryExp || militaryExp === null) {
         civilianCount++;
@@ -124,6 +129,150 @@ export function getMilitaryCounts() {
     military: militaryTotalCount,
     branches: militaryBranches
   };
+}
+
+/**
+ * Get all astronauts in a specific group, optionally filtered
+ * @param {string} groupName - The group identifier (e.g., 'group_1', 'group_24')
+ * @param {object} filters - Filter object with keys: military, degree, gender
+ * @returns {array} Array of astronaut objects that pass the filters
+ */
+export function getGroupAstronauts(groupName, filters = {}) {
+  const group = getGroup(groupName);
+  if (!group || !group.astronauts) return [];
+  
+  return group.astronauts.filter(astronaut => passesFilters(astronaut, filters));
+}
+
+/**
+ * Get total applications across all groups
+ * @returns {number} Total applications received
+ */
+export function getTotalApplications() {
+  return getGroupNames().reduce((sum, name) => {
+    return sum + (getGroup(name).applications_received || 0);
+  }, 0);
+}
+
+/**
+ * Get degree list with counts (all degrees with their highest occurrence)
+ * @param {object} filters - Filter object with keys: military, degree, gender
+ * @returns {object} Object with degree as key, count as value
+ */
+export function getDegreeList(filters = {}) {
+  const degrees = {};
+  getGroupNames().forEach(name => {
+    getGroup(name).astronauts.forEach(astronaut => {
+      if (!passesFilters(astronaut, filters)) return;
+      const degree = astronaut.highest_degree;
+      if (degree) {
+        degrees[degree] = (degrees[degree] || 0) + 1;
+      }
+    });
+  });
+  return degrees;
+}
+
+/**
+ * Get field of study counts from degrees array
+ * @param {object} filters - Filter object with keys: military, degree, gender
+ * @returns {object} Object with field category as key, count as value
+ */
+export function getFieldOfStudyCounts(filters = {}) {
+  const counts = {};
+  getGroupNames().forEach(name => {
+    getGroup(name).astronauts.forEach(astronaut => {
+      if (!passesFilters(astronaut, filters)) return;
+      // Support both new degrees array and fallback to education text
+      if (astronaut.degrees && Array.isArray(astronaut.degrees)) {
+        astronaut.degrees.forEach(d => {
+          if (d.category) {
+            counts[d.category] = (counts[d.category] || 0) + 1;
+          }
+        });
+      }
+    });
+  });
+  return counts;
+}
+
+/**
+ * Get age distribution in buckets
+ * @param {object} filters - Filter object with keys: military, degree, gender
+ * @param {number} bucketSize - Size of age buckets (default 4)
+ * @returns {object} Object with age range labels as keys, counts as values
+ */
+export function getAgeDistribution(filters = {}, bucketSize = 4) {
+  const buckets = {};
+  getGroupNames().forEach(name => {
+    getGroup(name).astronauts.forEach(astronaut => {
+      if (!passesFilters(astronaut, filters)) return;
+      const age = astronaut.age_at_selection;
+      if (!age) return;
+      const bucket = Math.floor(age / bucketSize) * bucketSize;
+      const label = `${bucket}–${bucket + bucketSize - 1}`;
+      buckets[label] = (buckets[label] || 0) + 1;
+    });
+  });
+  return buckets;
+}
+
+/**
+ * Get military branches with gender breakdown
+ * @param {object} filters - Filter object with keys: military, degree, gender
+ * @returns {object} Object with branch names as keys, value has male/female/total counts
+ */
+export function getMilitaryBranchesByGender(filters = {}) {
+  const branches = {};
+  
+  getGroupNames().forEach(name => {
+    getGroup(name).astronauts.forEach(astronaut => {
+      if (!passesFilters(astronaut, filters)) return;
+      
+      const militaryExp = astronaut.military_experience;
+      if (!militaryExp) return;
+      
+      // Parse military branches
+      let branchList = militaryExp.split(/[,;]/);
+      branchList.forEach(branchStr => {
+        let branch = branchStr.trim().toLowerCase();
+        
+        // Normalize branch names
+        if (branch.includes('air force') || branch.includes('usaf')) {
+          branch = 'Air Force';
+        } else if (branch.includes('navy') || branch.includes('usn')) {
+          branch = 'Navy';
+        } else if (branch.includes('army') || branch.includes('usa ')) {
+          branch = 'Army';
+        } else if (branch.includes('marine') || branch.includes('usmc') || branch.includes('usmcr')) {
+          branch = 'Marines';
+        } else if (branch.includes('coast guard')) {
+          branch = 'Coast Guard';
+        } else if (branch.includes('space force')) {
+          branch = 'Space Force';
+        } else if (branch.includes('canadian') || branch.includes('rcaf')) {
+          branch = 'Royal Canadian Air Force';
+        } else if (branch.includes('self defense')) {
+          branch = 'Japan Air Self Defense Force';
+        } else if (branch.includes('dubai police')) {
+          branch = 'Dubai Police';
+        }
+        
+        if (!branches[branch]) {
+          branches[branch] = { male: 0, female: 0, total: 0 };
+        }
+        
+        branches[branch].total++;
+        if (astronaut.gender === 'male') {
+          branches[branch].male++;
+        } else if (astronaut.gender === 'female') {
+          branches[branch].female++;
+        }
+      });
+    });
+  });
+  
+  return branches;
 }
 
 // compute and display ratio of astronauts with military experience

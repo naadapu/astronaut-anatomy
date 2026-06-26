@@ -3,7 +3,596 @@
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <title>Astronaut Anatomy</title>
- <link rel="stylesheet" href="stylesheet.css">
+ <style>
+:root {
+  --bg: rgb(255, 255, 255);
+  --fg: rgb(0, 0, 0);
+  --fg-muted: rgb(100, 100, 100);
+  --border: #000;
+  --border-row: rgb(100, 100, 100);
+  --select-bg: #fff;
+  --bar-color: #2a6fdb;
+  --bar-label: #000;
+}
+
+body.dark-mode {
+  --bg: #0f1117;
+  --fg: #e8eaf0;
+  --fg-muted: #8b95a8;
+  --border: #444;
+  --border-row: #333;
+  --select-bg: #1e2130;
+  --bar-color: #4d9fff;
+  --bar-label: #e8eaf0;
+}
+
+#dark-mode-toggle {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  z-index: 999;
+  background: var(--select-bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s, color 0.2s;
+}
+#dark-mode-toggle:hover { opacity: 0.8; }
+
+* { box-sizing: border-box; }
+
+#filters, select { font-size: large; }
+
+#filters {
+  background-color: rgba(42, 111, 219, 0.08);
+  border-left: 4px solid var(--bar-color);
+  border-radius: 4px;
+  padding: 20px;
+  margin: 25px 0;
+}
+
+#filters h2 {
+  margin-top: 0;
+  padding-top: 0;
+  border-bottom: none;
+  color: var(--fg);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 0;
+}
+
+.filter-group label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.filter-group select {
+  padding: 10px 10px;
+  font-size: 15px;
+  border-radius: 4px;
+}
+
+select {
+  background-color: var(--select-bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+a {
+  color: var(--bar-color);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-size: 16px;
+  line-height: 1.6;
+  transition: background-color 0.25s, color 0.25s;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 { font-size: 28px; margin-bottom: 10px; margin-top: 0; }
+h2 { 
+  font-size: 22px; 
+  margin-top: 30px; 
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--bar-color);
+  color: var(--bar-color);
+}
+h3 { font-size: 18px; margin-bottom: 8px; }
+p { font-size: 16px; margin: 8px 0; }
+em { font-style: italic; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+#key_metrics {
+  background-color: rgba(42, 111, 219, 0.08);
+  border-left: 4px solid var(--bar-color);
+  border-radius: 4px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+#key_metrics h1 {
+  margin-top: 0;
+  color: var(--bar-color);
+}
+
+#key_metrics pre {
+  margin: 15px 0 0 0;
+  padding: 15px;
+  background-color: var(--bg);
+  border: 1px solid var(--border-row);
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+table th, table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-row);
+}
+
+table th {
+  border-bottom: 2px solid var(--bar-color);
+  font-weight: bold;
+  background-color: rgba(42, 111, 219, 0.1);
+  color: var(--bar-color);
+}
+
+table tbody tr:hover {
+  background-color: rgba(42, 111, 219, 0.05);
+}
+
+table a {
+  color: var(--bar-color);
+  text-decoration: none;
+}
+
+table a:hover {
+  text-decoration: underline;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.section {
+  margin: 50px 0;
+  padding: 0;
+  border-top: 2px solid var(--border);
+}
+
+.section:first-of-type {
+  border-top: none;
+}
+
+.section h2 {
+  margin-top: 0;
+  padding-top: 20px;
+}
+
+.chart-section {
+  margin: 30px 0;
+  padding: 25px;
+  background-color: rgba(42, 111, 219, 0.06);
+  border: 1px solid rgba(42, 111, 219, 0.2);
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.chart-section h3 {
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(42, 111, 219, 0.3);
+  color: var(--bar-color);
+}
+
+.chart-section:hover {
+  background-color: rgba(42, 111, 219, 0.08);
+}
+
+.instructions {
+  color: var(--fg-muted);
+  font-style: italic;
+  font-size: 14px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(42, 111, 219, 0.12) 0%, rgba(42, 111, 219, 0.06) 100%);
+  border: 2px solid var(--bar-color);
+  border-radius: 8px;
+  padding: 35px;
+  margin: 35px 0;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(42, 111, 219, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(42, 111, 219, 0.12);
+}
+
+.selectivity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.selectivity-label {
+  font-size: 13px;
+  color: var(--fg-muted);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.selectivity-stat {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0;
+  color: var(--bar-color);
+  line-height: 1.3;
+}
+
+.selectivity-stat strong {
+  font-size: 48px;
+  color: var(--bar-color);
+  display: block;
+  margin: 8px 0;
+}
+
+.selectivity-details {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin: 0;
+  font-weight: 500;
+}
+
+.degree-list {
+  margin: 15px 0;
+}
+
+.degree-table {
+  width: 100%;
+  max-width: 500px;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.degree-table th,
+.degree-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-row);
+}
+
+.degree-table th {
+  border-bottom: 2px solid var(--bar-color);
+  font-weight: bold;
+  background-color: rgba(42, 111, 219, 0.12);
+  color: var(--bar-color);
+}
+
+.degree-table tbody tr:hover {
+  background-color: rgba(42, 111, 219, 0.08);
+}
+
+.group-section {
+  margin-bottom: 20px;
+  border: 1px solid var(--border-row);
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--bg);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.group-section:hover {
+  border-color: var(--bar-color);
+  box-shadow: 0 2px 8px rgba(42, 111, 219, 0.1);
+}
+
+.group-section h3 {
+  margin: 0;
+  padding: 16px 18px;
+  background-color: rgba(42, 111, 219, 0.12);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.group-section h3:hover {
+  background-color: rgba(42, 111, 219, 0.18);
+}
+
+.group-section h3::after {
+  content: '▼';
+  font-size: 11px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.group-section h3.collapsed::after {
+  transform: rotate(-90deg);
+}
+
+.group-section .table-wrapper {
+  display: block;
+  padding: 0 18px 18px 18px;
+  max-height: 800px;
+  overflow-y: auto;
+}
+
+.group-section.collapsed .table-wrapper {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  body { 
+    padding: 15px; 
+    font-size: 15px; 
+  }
+  
+  h1 { font-size: 24px; margin-bottom: 8px; }
+  h2 { 
+    font-size: 20px; 
+    margin-top: 25px; 
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+  h3 { font-size: 16px; margin-bottom: 6px; }
+  p { font-size: 15px; margin: 5px 0; }
+  
+  #filters {
+    padding: 15px;
+    margin: 20px 0;
+  }
+  
+  .filter-group { gap: 12px; }
+  .filter-group label { font-size: 14px; }
+  .filter-group select { padding: 8px 8px; font-size: 14px; }
+  
+  .section { margin: 35px 0; }
+  
+  table { font-size: 13px; }
+  table th, table td { padding: 10px 8px; }
+  
+  .chart-section { 
+    padding: 18px; 
+    margin: 20px 0; 
+  }
+  
+  .chart-section h3 { 
+    font-size: 15px; 
+    padding-bottom: 8px;
+  }
+  
+  .degree-table { 
+    max-width: 100%; 
+    font-size: 13px;
+  }
+  .degree-table th, .degree-table td { 
+    padding: 10px 8px; 
+  }
+  
+  .group-section { margin-bottom: 25px; }
+  .group-section h3 { 
+    padding: 14px 14px; 
+    font-size: 15px;
+  }
+  .group-section .table-wrapper { 
+    padding: 0 14px 14px 14px; 
+  }
+  
+  .stat-card { 
+    padding: 25px; 
+    margin: 25px 0;
+  }
+  .selectivity-stat { font-size: 26px; }
+  .selectivity-stat strong { font-size: 36px; }
+  .selectivity-label { font-size: 12px; }
+  .selectivity-details { font-size: 13px; }
+  
+  #degreeChart { height: 320px; }
+  
+  .table-wrapper { margin-bottom: 15px; }
+}
+
+@media (max-width: 480px) {
+  body { 
+    padding: 12px; 
+    font-size: 14px; 
+    max-width: 100%;
+  }
+  
+  #dark-mode-toggle {
+    top: 10px;
+    right: 12px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  
+  h1 { 
+    font-size: 20px; 
+    margin-bottom: 6px; 
+  }
+  h2 { 
+    font-size: 18px; 
+    margin-top: 18px; 
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+  h3 { font-size: 15px; margin-bottom: 5px; }
+  p { font-size: 14px; margin: 4px 0; }
+  
+  #filters {
+    padding: 12px;
+    margin: 15px 0;
+  }
+  
+  #filters h2 {
+    font-size: 17px;
+    margin: 0 0 12px 0;
+    padding: 0 0 6px 0;
+  }
+  
+  .filter-group { gap: 10px; }
+  .filter-group label { 
+    font-size: 13px; 
+    gap: 4px;
+  }
+  .filter-group select { 
+    padding: 7px 8px; 
+    font-size: 13px;
+  }
+  
+  .section { 
+    margin: 25px 0; 
+    padding: 0;
+  }
+  
+  table { font-size: 12px; }
+  table th, table td { padding: 8px 6px; }
+  
+  .chart-section { 
+    padding: 12px; 
+    margin: 15px 0; 
+  }
+  
+  .chart-section h3 { 
+    font-size: 14px; 
+    padding-bottom: 6px;
+    margin: 0 0 10px 0;
+  }
+  
+  .degree-table { 
+    font-size: 12px; 
+    max-width: 100%; 
+    margin-top: 10px;
+  }
+  .degree-table th, .degree-table td { 
+    padding: 8px 6px; 
+  }
+  
+  .group-section { margin-bottom: 15px; }
+  .group-section h3 { 
+    padding: 12px 12px; 
+    font-size: 14px;
+  }
+  .group-section .table-wrapper { 
+    padding: 0 12px 12px 12px; 
+  }
+  
+  .stat-card { 
+    padding: 15px; 
+    margin: 18px 0;
+    border-radius: 6px;
+  }
+  .selectivity-label { 
+    font-size: 11px; 
+    letter-spacing: 0.8px;
+  }
+  .selectivity-stat { 
+    font-size: 18px; 
+    line-height: 1.2;
+  }
+  .selectivity-stat strong { 
+    font-size: 26px; 
+    margin: 6px 0;
+  }
+  .selectivity-details { font-size: 12px; }
+  
+  #degreeChart { 
+    height: 280px; 
+    margin: 15px 0;
+  }
+  
+  #militaryBranchViewer {
+    margin: 15px 0;
+  }
+  
+  .table-wrapper { 
+    margin-bottom: 10px;
+    padding: 0;
+  }
+  
+  .instructions {
+    font-size: 12px;
+    margin: 10px 0;
+  }
+}
+
+#degreeChart {
+  width: 100%;
+  max-width: 800px;
+  height: 400px;
+  display: block;
+  margin: 20px auto;
+  border-radius: 4px;
+}
+
+#militaryBranchViewer {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px 0;
+}
+
+#militaryBranchViewer canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+ </style>
 </head>
 
 <body>
@@ -31,30 +620,33 @@
       Most common degree: 36 MS
       2nd most common: 16 PhD
     </pre>
-  </div>  
+  </div>
+
+  <div id="selectivity_stat" class="stat-card"></div>
 
   <div id="filters">
-    <h2>Filter</h2>
-    <label>
-        Gender:
+    <h2>Filter Astronauts</h2>
+    <div class="filter-group">
+      <label for="gender_filter">
+        <strong>Gender:</strong>
         <select id="gender_filter">
           <option value="all">All</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
       </label>
-      <br>  
-    <label>
-        Military:
+      
+      <label for="military_filter">
+        <strong>Military Background:</strong>
         <select id="military_filter">
           <option value="all">All</option>
           <option value="military">Military Only</option>
           <option value="civilian">Civilian Only</option>
         </select>
       </label>
-      <br>
-      <label>
-        Highest degree earned:
+      
+      <label for="degree_filter">
+        <strong>Highest Degree:</strong>
         <select id="degree_filter">
           <option value="all">All</option>
           <option value="PhD">PhD</option>
@@ -69,16 +661,36 @@
           <option value="BEng">BEng</option>
         </select>
       </label>
+    </div>
   </div>
 
-  <canvas id="degreeChart"></canvas>
+  <div id="visualizations" class="section">
+    <h2>Key Insights</h2>
+    
+    <div id="degreeChartSection" class="chart-section">
+      <h3>Academic Degrees</h3>
+      <canvas id="degreeChart"></canvas>
+    </div>
 
-  <h2>Group info</h2>
-  
-  <div id="groups_info">put group info here!</div>
+    <div id="militaryBranchSection" class="chart-section">
+      <h3>Military Branches</h3>
+      <div id="militaryBranchViewer"></div>
+    </div>
 
-  <script type="module" src="groups_display.js"></script>
-  <script type="module" src="degreeChart.js"></script>
-  <script src="darkMode.js"></script>
+    <div id="degreeExplorerSection" class="chart-section">
+      <h3>Degree Distribution</h3>
+      <div id="degreeExplorer"></div>
+    </div>
+  </div>
+
+  <div id="astronautsSection" class="section">
+    <h2>Astronauts by Selection Group</h2>
+    <p class="instructions">Click on a group to expand and view details</p>
+    <div id="groups_info"></div>
+  </div>
+
+  <script type="module" defer src="data.js"></script>
+  <script type="module" defer src="app.js"></script>
+  <script defer src="darkMode.js"></script>
 </body>
 </html>

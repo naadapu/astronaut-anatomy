@@ -1,5 +1,5 @@
-import { getGroupNames, getGroup } from './dataService.js';
-import { filterService, passesFilters } from './filterService.js';
+import { getGroupNames, getGroup, getGroupAstronauts } from './dataService.js';
+import { filterService } from './filterService.js';
 import { buildGroupSection } from './tableBuilder.js';
 
 function displayGroupsInfo(filters = {}) {
@@ -12,7 +12,7 @@ function displayGroupsInfo(filters = {}) {
 
   groupNames.forEach(groupName => {
     const group = getGroup(groupName);
-    const astronauts = group.astronauts.filter(a => passesFilters(a, filters));
+    const astronauts = getGroupAstronauts(groupName, filters);
     const section = buildGroupSection(groupName, group, astronauts);
     if (section) container.appendChild(section);
   });

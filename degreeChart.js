@@ -11,7 +11,7 @@ function getCSSVar(name) {
   return getComputedStyle(document.body).getPropertyValue(name).trim();
 }
 
-function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
+function drawDegreeChart(filters = { military: 'all', degree: 'all', gender: 'all' }) {
   const canvas = document.getElementById('degreeChart');
   const ctx = canvas.getContext('2d');
 
@@ -19,7 +19,10 @@ function drawDegreeChart(filters = { military: 'all', degree: 'all' }) {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
 
-  const bars = Object.entries(getDegreeCounts(filters))
+  // Chart shows degree distribution for selected military/gender
+  // Exclude degree filter so all degrees are visible regardless of selection
+  const chartFilters = { ...filters, degree: 'all' };
+  const bars = Object.entries(getDegreeCounts(chartFilters))
     .sort(([a], [b]) => (DEGREE_RANK[a] || 999) - (DEGREE_RANK[b] || 999));
 
   if (bars.length === 0) return;

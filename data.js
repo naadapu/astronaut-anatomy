@@ -1,22 +1,3 @@
-// data.js
-//
-// Field categotories to help make degrees searchable (todo)
-// Engineering
-// Physical Sciences
-// Biological Sciences
-// Mathematics
-// Medicine
-// Military Science
-// Computer Science
-// Other
-/*
-  links = document.getElementsByTagName('a')
-  for ( let i = 0; links[i]; i++) {
-    console.log(links[i].href)
-  }
-*/
-
-// todo add group 24: https://en.wikipedia.org/wiki/NASA_Astronaut_Group_24
 export const nasa = {
   "astronaut_groups": {
     "group_24": {

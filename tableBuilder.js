@@ -65,9 +65,7 @@ function buildGroupHeader(groupName, group) {
   if (group.applications_received) {
     headerText += ` | ${group.applications_received} applicants`;
   }
-  const h3 = document.createElement('h3');
-  h3.innerText = headerText;
-  return h3;
+  return headerText;
 }
 
 export function buildGroupSection(groupName, group, astronauts) {
@@ -75,7 +73,16 @@ export function buildGroupSection(groupName, group, astronauts) {
 
   const section = document.createElement('div');
   section.className = 'group-section';
-  section.appendChild(buildGroupHeader(groupName, group));
+  
+  // Create collapsible header
+  const h3 = document.createElement('h3');
+  h3.innerText = buildGroupHeader(groupName, group);
+  h3.style.cursor = 'pointer';
+  h3.addEventListener('click', () => {
+    section.classList.toggle('collapsed');
+    h3.classList.toggle('collapsed');
+  });
+  section.appendChild(h3);
 
   const tableWrapper = document.createElement('div');
   tableWrapper.className = 'table-wrapper';
